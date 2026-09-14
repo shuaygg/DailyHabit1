@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import Foundation
 
 @MainActor
 final class HabitController: ObservableObject {
@@ -10,12 +11,12 @@ final class HabitController: ObservableObject {
     @Published var isDarkMode = false
 
     init() {
-        self.habits = Self.defaultHabits
+        self.habits = Self.loadHabits() ?? Self.defaultHabits
     }
 
-    let categories = ["Mindfulness", "Fitness", "Health", "Learning", "Creativity", "Social"]
+    static let categories = ["Mindfulness", "Fitness", "Health", "Learning", "Creativity", "Social"]
 
-    let categoryIcons: [String: String] = [
+    static let categoryIcons: [String: String] = [
         "Mindfulness": "🧘",
         "Fitness": "🏃",
         "Health": "💧",
@@ -24,7 +25,7 @@ final class HabitController: ObservableObject {
         "Social": "👥"
     ]
 
-    let categoryColors: [String: (Color, Color)] = [
+    static let categoryColors: [String: (Color, Color)] = [
         "Mindfulness": (AppColors.green, AppColors.greenBackground),
         "Fitness": (AppColors.purple, AppColors.purpleBackground),
         "Health": (AppColors.blue, AppColors.blueBackground),
@@ -32,6 +33,24 @@ final class HabitController: ObservableObject {
         "Creativity": (Color(red: 0.69, green: 0.35, blue: 0.48), Color(red: 0.96, green: 0.87, blue: 0.91)),
         "Social": (Color(red: 0.48, green: 0.56, blue: 0.36), Color(red: 0.91, green: 0.93, blue: 0.88))
     ]
+
+    private func saveHabits() {
+        let dtos = habits.map { HabitDTO(id: $0.id, name: $0.name, icon: $0.icon, streak: $0.streak, completed: $0.completed, category: $0.category, completedDays: $0.completedDays) }
+        if let encoded = try? JSONEncoder().encode(dtos) {
+            UserDefaults.standard.set(encoded, forKey: "habits")
+        }
+    }
+
+    private static func loadHabits() -> [Habit]? {
+        guard let data = UserDefaults.standard.data(forKey: "habits"),
+              let dtos = try? JSONDecoder().decode([HabitDTO].self, from: data) else {
+            return nil
+        }
+        return dtos.map { dto in
+            let colors = categoryColors[dto.category] ?? (AppColors.green, AppColors.greenBackground)
+            return Habit(id: dto.id, name: dto.name, icon: dto.icon, color: colors.0, colorBackground: colors.1, streak: dto.streak, completed: dto.completed, category: dto.category, completedDays: dto.completedDays)
+        }
+    }
 
     func finishOnboarding(name: String) {
         if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -55,6 +74,7 @@ final class HabitController: ObservableObject {
         if selectedHabit?.id == id {
             selectedHabit = habits[index]
         }
+        saveHabits()
     }
 
     func selectHabit(_ habit: Habit) {
@@ -64,7 +84,7 @@ final class HabitController: ObservableObject {
     func addHabit(name: String, category: String, icon: String) {
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
 
-        let colors = categoryColors[category] ?? (AppColors.green, AppColors.greenBackground)
+        let colors = HabitController.categoryColors[category] ?? (AppColors.green, AppColors.greenBackground)
 
         let newHabit = Habit(
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -78,11 +98,13 @@ final class HabitController: ObservableObject {
         )
 
         habits.append(newHabit)
+        saveHabits()
     }
 
     func clearAllData() {
         habits = []
         selectedHabit = nil
+        UserDefaults.standard.removeObject(forKey: "habits")
     }
 
     var totalCompleted: Int {

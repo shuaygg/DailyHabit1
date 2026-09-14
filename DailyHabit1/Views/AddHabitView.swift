@@ -68,7 +68,7 @@ struct AddHabitView: View {
                             .padding(.bottom, 8)
 
                         VStack(spacing: 8) {
-                            ForEach(controller.categories, id: \.self) { category in
+                            ForEach(HabitController.categories, id: \.self) { category in
                                 categoryRow(category)
                             }
                         }
@@ -99,14 +99,14 @@ struct AddHabitView: View {
     }
 
     private func categoryRow(_ category: String) -> some View {
-        let colors = controller.categoryColors[category] ?? (AppColors.green, AppColors.greenBackground)
+        let colors = HabitController.categoryColors[category] ?? (AppColors.green, AppColors.greenBackground)
         let selected = selectedCategory == category
 
         return Button {
             selectedCategory = category
         } label: {
             HStack(spacing: 14) {
-                Text(controller.categoryIcons[category] ?? "🌿")
+                Text(HabitController.categoryIcons[category] ?? "🌿")
                     .font(.system(size: 20))
 
                 SansText(category, size: 15, weight: .medium, color: selected ? colors.0 : AppColors.text)

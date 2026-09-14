@@ -34,6 +34,16 @@ struct Habit: Identifiable, Equatable {
     }
 }
 
+struct HabitDTO: Codable {
+    let id: UUID
+    let name: String
+    let icon: String
+    let streak: Int
+    let completed: Bool
+    let category: String
+    let completedDays: [Bool]
+}
+
 struct Achievement: Identifiable {
     let id = UUID()
     let icon: String
