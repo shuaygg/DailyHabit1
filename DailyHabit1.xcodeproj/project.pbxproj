@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		83F3DFC430A46E8A00FDE092 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 83F3DFC330A46E8A00FDE092 /* FirebaseCore */; };
+		83F3DFC830A471AD00FDE092 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 83F3DFC730A471AD00FDE092 /* FirebaseFirestore */; };
+		83F3DFCA30A471B300FDE092 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 83F3DFC930A471B300FDE092 /* FirebaseAuth */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		831BCB6F305154AC007A051B /* DailyHabit1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DailyHabit1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		831BCB8D30515518007A051B /* DailyHabitTracker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = DailyHabitTracker.xcodeproj; sourceTree = "<group>"; };
@@ -14,9 +20,22 @@
 		831BCBD430515518007A051B /* DailyHabitTracker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = DailyHabitTracker.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		83F3DFC630A4715F00FDE092 /* Exceptions for "DailyHabit1" folder in "DailyHabit1" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 831BCB6E305154AC007A051B /* DailyHabit1 */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		831BCB71305154AC007A051B /* DailyHabit1 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				83F3DFC630A4715F00FDE092 /* Exceptions for "DailyHabit1" folder in "DailyHabit1" target */,
+			);
 			path = DailyHabit1;
 			sourceTree = "<group>";
 		};
@@ -27,6 +46,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83F3DFC430A46E8A00FDE092 /* FirebaseCore in Frameworks */,
+				83F3DFCA30A471B300FDE092 /* FirebaseAuth in Frameworks */,
+				83F3DFC830A471AD00FDE092 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -37,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				831BCB71305154AC007A051B /* DailyHabit1 */,
+				83F3DFC230A46E8A00FDE092 /* Frameworks */,
 				831BCB70305154AC007A051B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -77,6 +100,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83F3DFC230A46E8A00FDE092 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -97,6 +127,9 @@
 			);
 			name = DailyHabit1;
 			packageProductDependencies = (
+				83F3DFC330A46E8A00FDE092 /* FirebaseCore */,
+				83F3DFC730A471AD00FDE092 /* FirebaseFirestore */,
+				83F3DFC930A471B300FDE092 /* FirebaseAuth */,
 			);
 			productName = DailyHabit1;
 			productReference = 831BCB6F305154AC007A051B /* DailyHabit1.app */;
@@ -126,6 +159,9 @@
 			);
 			mainGroup = 831BCB66305154AC007A051B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				83F3DFC130A46A7C00FDE092 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 831BCB70305154AC007A051B /* Products */;
 			projectDirPath = "";
@@ -303,6 +339,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DailyHabit1/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -334,6 +371,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DailyHabit1/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -378,6 +416,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		83F3DFC130A46A7C00FDE092 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.1.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		83F3DFC330A46E8A00FDE092 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 83F3DFC130A46A7C00FDE092 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		83F3DFC730A471AD00FDE092 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 83F3DFC130A46A7C00FDE092 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		83F3DFC930A471B300FDE092 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 83F3DFC130A46A7C00FDE092 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 831BCB67305154AC007A051B /* Project object */;
 }

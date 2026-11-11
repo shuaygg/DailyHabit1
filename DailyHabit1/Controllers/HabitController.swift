@@ -1,6 +1,8 @@
 import SwiftUI
 import Combine
 import Foundation
+import FirebaseFirestore
+import FirebaseAuth
 
 @MainActor
 final class HabitController: ObservableObject {
@@ -8,7 +10,16 @@ final class HabitController: ObservableObject {
     @Published var selectedHabit: Habit?
     @Published var userName = "Alex Chen"
     @Published var hasCompletedOnboarding = false
+    @Published var isAuthenticated = false
     @Published var isDarkMode = false
+    @Published var remindersEnabled = false
+    @Published var weekStartDay = 1 // 1 for Monday, 7 for Sunday
+
+    private var db = Firestore.firestore()
+    private var auth = Auth.auth()
+    private var listener: ListenerRegistration?
+
+    static let daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
     init() {
         self.habits = Self.loadHabits() ?? Self.defaultHabits
@@ -35,9 +46,20 @@ final class HabitController: ObservableObject {
     ]
 
     private func saveHabits() {
+        guard let userId = auth.currentUser?.uid else { return }
         let dtos = habits.map { HabitDTO(id: $0.id, name: $0.name, icon: $0.icon, streak: $0.streak, completed: $0.completed, category: $0.category, completedDays: $0.completedDays) }
-        if let encoded = try? JSONEncoder().encode(dtos) {
-            UserDefaults.standard.set(encoded, forKey: "habits")
+        
+        for dto in dtos {
+            let data: [String: Any] = [
+                "id": dto.id.uuidString,
+                "name": dto.name,
+                "icon": dto.icon,
+                "streak": dto.streak,
+                "completed": dto.completed,
+                "category": dto.category,
+                "completedDays": dto.completedDays
+            ]
+            db.collection("users").document(userId).collection("habits").document(dto.id.uuidString).setData(data)
         }
     }
 
@@ -57,6 +79,35 @@ final class HabitController: ObservableObject {
             userName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         }
         hasCompletedOnboarding = true
+    }
+
+    func authenticate(email: String, password: String, isLogin: Bool, completion: @escaping (Bool) -> Void) {
+        if isLogin {
+            auth.signIn(withEmail: email, password: password) { [weak self] result, error in
+                if let error = error {
+                    print("Login error: \(error.localizedDescription)")
+                    completion(false)
+                    return
+                }
+                self?.isAuthenticated = true
+                completion(true)
+            }
+        } else {
+            auth.createUser(withEmail: email, password: password) { [weak self] result, error in
+                if let error = error {
+                    print("Registration error: \(error.localizedDescription)")
+                    completion(false)
+                    return
+                }
+                completion(true)
+            }
+        }
+    }
+
+    func logout() {
+        try? auth.signOut()
+        isAuthenticated = false
+        hasCompletedOnboarding = false // Optional: reset onboarding status
     }
 
     func toggleHabit(_ id: UUID) {
@@ -82,11 +133,14 @@ final class HabitController: ObservableObject {
     }
 
     func addHabit(name: String, category: String, icon: String) {
-        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        guard let userId = auth.currentUser?.uid,
+              !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
 
+        let habitId = UUID()
         let colors = HabitController.categoryColors[category] ?? (AppColors.green, AppColors.greenBackground)
 
         let newHabit = Habit(
+            id: habitId,
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
             icon: icon,
             color: colors.0,
@@ -98,8 +152,24 @@ final class HabitController: ObservableObject {
         )
 
         habits.append(newHabit)
-        saveHabits()
-    }
+        
+        let data: [String: Any] = [
+            "id": habitId.uuidString,
+            "name": newHabit.name,
+            "icon": newHabit.icon,
+            "streak": newHabit.streak,
+            "completed": newHabit.completed,
+            "category": newHabit.category,
+            "completedDays": newHabit.completedDays
+        ]
+        
+        db.collection("users").document(userId).collection("habits").document(habitId.uuidString).setData(data) { error in
+            if let error = error {
+                print("Error adding habit: \(error.localizedDescription)")
+            } else {
+                print("Habit successfully added!")
+            }
+        }
 
     func clearAllData() {
         habits = []

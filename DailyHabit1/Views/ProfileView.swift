@@ -112,7 +112,9 @@ struct ProfileView: View {
             SectionLabel(text: "Settings")
 
             VStack(spacing: 0) {
-                settingRow(icon: "🔔", title: "Reminders", value: "8:00 AM") {}
+                settingRow(icon: "🔔", title: "Reminders", value: controller.remindersEnabled ? "On" : "Off") {
+                    controller.remindersEnabled.toggle()
+                }
                 Divider().padding(.leading, 50)
 
                 settingRow(icon: "🌙", title: "Dark Mode", value: controller.isDarkMode ? "On" : "Off") {
@@ -120,11 +122,29 @@ struct ProfileView: View {
                 }
                 Divider().padding(.leading, 50)
 
-                settingRow(icon: "📅", title: "Week Start", value: "Monday") {}
+                Menu {
+                    Picker("Week Start", selection: $controller.weekStartDay) {
+                        ForEach(0..<HabitController.daysOfWeek.count, id: \.self) { index in
+                            Text(HabitController.daysOfWeek[index]).tag(index)
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 14) {
+                        Text("📅").font(.system(size: 18))
+                        SansText("Week Start", size: 15, color: AppColors.text)
+                        Spacer()
+                        SansText(HabitController.daysOfWeek[controller.weekStartDay], size: 14, color: AppColors.mutedText)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(Color(red: 0.75, green: 0.73, blue: 0.70))
+                    }
+                    .padding(.horizontal, 18)
+                    .frame(height: 52)
+                }
                 Divider().padding(.leading, 50)
 
-                settingRow(icon: "🗑️", title: "Clear All Data", value: "") {
-                    showClearConfirmation = true
+                settingRow(icon: "🚪", title: "Logout", value: "") {
+                    controller.logout()
                 }
             }
             .background(Color.white)
